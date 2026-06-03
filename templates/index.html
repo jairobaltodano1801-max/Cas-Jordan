@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cas Jordan - Tecnología & Soporte</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="logo">⚡ Cas Jordan</div>
+    <nav>
+        <a href="#productos"><i class="fas fa-laptop"></i> Catálogo</a>
+        <a href="#servicios"><i class="fas fa-tools"></i> Soporte Técnico</a>
+        <a href="#contacto"><i class="fas fa-map-marker-alt"></i> Contacto</a>
+        <a href="https://wa.me/51999999999" target="_blank" class="btn-whatsapp-nav"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    </nav>
+    <div class="carrito-icono" onclick="toggleCarrito()">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="contador-carrito">0</span>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <span class="hero-badge">🔥 Ofertas de temporada</span>
+        <h1>Equipa tu vida con lo último<br>en <span class="highlight">tecnología</span></h1>
+        <p>Venta de equipos de cómputo, celulares, accesorios y servicio técnico garantizado en Lima.</p>
+        <div class="hero-btns">
+            <a href="#productos" class="btn-primary">Ver Catálogo <i class="fas fa-arrow-right"></i></a>
+            <a href="#servicios" class="btn-secondary">Soporte Técnico</a>
+        </div>
+    </div>
+    <div class="hero-image">
+        <div class="hero-float-card"><i class="fas fa-shield-alt"></i><span>Garantía Oficial</span></div>
+        <div class="hero-float-card2"><i class="fas fa-truck"></i><span>Envío Rápido</span></div>
+        <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&q=80" alt="MacBook Pro">
+    </div>
+</section>
+
+<!-- POR QUÉ ELEGIRNOS -->
+<section class="por-que">
+    <div class="container">
+        <div class="pq-grid">
+            <div class="pq-card">
+                <div class="pq-icon"><i class="fas fa-truck"></i></div>
+                <h3>Envíos Rápidos</h3>
+                <p>Entrega garantizada en 24-48 horas a todo Lima.</p>
+            </div>
+            <div class="pq-card">
+                <div class="pq-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Garantía de Fábrica</h3>
+                <p>Todos nuestros productos cuentan con garantía oficial.</p>
+            </div>
+            <div class="pq-card">
+                <div class="pq-icon"><i class="fas fa-credit-card"></i></div>
+                <h3>Facilidades de Pago</h3>
+                <p>Cuotas sin interés y múltiples métodos de pago.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRODUCTOS DESTACADOS -->
+<section class="destacados">
+    <div class="container">
+        <h2>⭐ Más Vendidos</h2>
+        <div class="destacados-grid">
+            {% for prod in destacados %}
+            <div class="card-destacado">
+                <span class="badge-oferta">{{ prod.badge }}</span>
+                <img src="{{ prod.imagen }}" alt="{{ prod.nombre }}">
+                <h3>{{ prod.nombre }}</h3>
+                <p class="precio-dest">{{ prod.precio }}</p>
+                <button class="btn-agregar" onclick="agregarCarrito('{{ prod.nombre }}', '{{ prod.precio }}', {{ prod.precio_num }})">
+                    <i class="fas fa-cart-plus"></i> Añadir al carrito
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CATÁLOGO COMPLETO -->
+<section id="productos" class="container">
+    <h2>🛒 Catálogo Completo</h2>
+    <div class="filtros">
+        <button class="filtro activo" onclick="filtrar('todos', this)">Todos</button>
+        <button class="filtro" onclick="filtrar('laptops', this)">Laptops</button>
+        <button class="filtro" onclick="filtrar('celulares', this)">Celulares</button>
+        <button class="filtro" onclick="filtrar('accesorios', this)">Accesorios</button>
+    </div>
+    <div class="grid" id="grid-productos">
+        {% for prod in productos %}
+        <div class="card" data-categoria="{{ prod.categoria_key }}">
+            <img src="{{ prod.imagen }}" alt="{{ prod.nombre }}">
+            <div class="card-body">
+                <span class="tag">{{ prod.categoria }}</span>
+                <h3>{{ prod.nombre }}</h3>
+                <p class="desc">{{ prod.descripcion }}</p>
+                <p class="precio">{{ prod.precio }}</p>
+                <button class="btn-comprar" onclick="agregarCarrito('{{ prod.nombre }}', '{{ prod.precio }}', {{ prod.precio_num }})">
+                    <i class="fas fa-cart-plus"></i> Añadir al Carrito
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- CARRITO LATERAL -->
+<div class="carrito-panel" id="carritoPanel">
+    <div class="carrito-header">
+        <h3><i class="fas fa-shopping-cart"></i> Tu Carrito</h3>
+        <button onclick="toggleCarrito()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="carrito-items" id="carritoItems">
+        <p class="carrito-vacio">Tu carrito está vacío</p>
+    </div>
+    <div class="carrito-footer">
+        <p class="total">Total: <strong id="totalCarrito">S/. 0</strong></p>
+        <button class="btn-pagar" onclick="mostrarFormularioPago()">
+            <i class="fas fa-credit-card"></i> Comprar Ahora
+        </button>
+    </div>
+</div>
+<div class="overlay-carrito" id="overlayCarrito" onclick="toggleCarrito()"></div>
+
+<!-- MODAL PAGO -->
+<div class="modal" id="modalPago">
+    <div class="modal-content">
+        <span class="cerrar" onclick="cerrarModal('modalPago')">&times;</span>
+        <h2><i class="fas fa-lock"></i> Finalizar Compra</h2>
+        <div class="resumen-compra" id="resumenCompra"></div>
+        <div class="form-grid">
+            <input type="text" placeholder="Nombre completo">
+            <input type="text" placeholder="DNI">
+            <input type="tel" placeholder="Teléfono de contacto">
+            <input type="email" placeholder="Correo electrónico">
+            <input type="text" placeholder="Número de tarjeta">
+            <input type="text" placeholder="MM/AA">
+            <input type="text" placeholder="CVV">
+            <input type="text" placeholder="Dirección de entrega">
+        </div>
+        <button class="btn-confirmar" onclick="confirmarCompra()">
+            <i class="fas fa-check-circle"></i> Confirmar Pago
+        </button>
+    </div>
+</div>
+
+<!-- SOPORTE TÉCNICO -->
+<section id="servicios" class="container bg-light">
+    <h2>🔧 Soporte y Reparaciones</h2>
+    <div class="grid">
+        {% for serv in servicios %}
+        <div class="card-servicio">
+            <div class="serv-icon"><i class="{{ serv.icono }}"></i></div>
+            <h3>{{ serv.nombre }}</h3>
+            <p>{{ serv.descripcion }}</p>
+            <button class="btn-cita" onclick="mostrarFormularioCita('{{ serv.nombre }}')">
+                <i class="fas fa-calendar-alt"></i> Agendar Cita
+            </button>
+            <a href="https://wa.me/51999999999?text=Hola, necesito soporte: {{ serv.nombre }}" target="_blank" class="btn-whatsapp">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- MODAL CITA -->
+<div class="modal" id="modalCita">
+    <div class="modal-content">
+        <span class="cerrar" onclick="cerrarModal('modalCita')">&times;</span>
+        <h2><i class="fas fa-calendar-check"></i> Agendar Cita Técnica</h2>
+        <p id="servicio-seleccionado" class="tag" style="text-align:center;margin-bottom:15px;"></p>
+        <div class="form-grid">
+            <input type="text" placeholder="Tu nombre completo">
+            <input type="tel" placeholder="Teléfono de contacto">
+            <input type="email" placeholder="Correo electrónico">
+            <input type="text" placeholder="Equipo a reparar (ej: Laptop HP)">
+            <textarea placeholder="Describe el problema de tu equipo..." rows="3" style="grid-column:1/-1;padding:12px;border:1px solid #ddd;border-radius:8px;font-family:inherit;resize:vertical;"></textarea>
+            <input type="date" style="grid-column:1/-1;">
+        </div>
+        <button class="btn-confirmar" onclick="confirmarCita()">
+            <i class="fas fa-check-circle"></i> Confirmar Cita
+        </button>
+    </div>
+</div>
+
+<!-- CONTACTO -->
+<section id="contacto" class="container">
+    <h2>📍 Encuéntranos</h2>
+    <div class="contacto-grid">
+        <div class="contacto-info">
+            <h3>Cas Jordan - Tienda Física</h3>
+            <p><i class="fas fa-map-marker-alt"></i> Av. Arequipa 1234, Miraflores, Lima</p>
+            <p><i class="fas fa-clock"></i> Lun - Sab: 9:00am - 7:00pm</p>
+            <p><i class="fas fa-phone"></i> +51 999 999 999</p>
+            <p><i class="fas fa-envelope"></i> contacto@casjordan.pe</p>
+            <a href="https://wa.me/51999999999" target="_blank" class="btn-whatsapp" style="display:inline-block;margin-top:15px;">
+                <i class="fab fa-whatsapp"></i> Escríbenos por WhatsApp
+            </a>
+        </div>
+        <div class="mapa">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3900.7!2d-77.0282!3d-12.1211!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8b5d35662bf%3A0x72f87a8f4e1d0ca3!2sAv.%20Arequipa%2C%20Miraflores%2015074!5e0!3m2!1ses!2spe!4v1620000000000!5m2!1ses!2spe"
+                width="100%" height="350" style="border:0;border-radius:12px;" allowfullscreen="" loading="lazy">
+            </iframe>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-content">
+        <div>
+            <h3>⚡ Cas Jordan</h3>
+            <p>Tu tecnología en manos de expertos.</p>
+        </div>
+        <div>
+            <p><i class="fab fa-whatsapp"></i> +51 999 999 999</p>
+            <p><i class="fas fa-envelope"></i> contacto@casjordan.pe</p>
+        </div>
+        <div>
+            <p>&copy; 2026 Cas Jordan. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay" onclick="cerrarTodosModales()"></div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
